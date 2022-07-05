@@ -1,10 +1,17 @@
 const router = require('express').Router();
 let Post = require('../models/post');
+let User = require('../models/user');
 
 router.route('/').get((req, res) => {
-  Post.find()
-    .then((posts) => res.json(posts))
-    .catch((err) => res.status(400).json('Error: ' + err));
+  User.findOne({ username: req.query.user })
+    .then((user) => {
+      if (user) {
+        Post.find({ authorId: user.id })
+          .then((posts) => res.json(posts))
+          .catch((err) => res.status(400).json('Error: ' + err));
+      }
+    })
+    .catch((err) => res.status(400).json({ message: '', error: err }));
 });
 
 router.route('/').post((req, res) => {
@@ -24,7 +31,7 @@ router.route('/').post((req, res) => {
   });
   newPost
     .save()
-    .then(() => res.json('Post created'))
+    .then((data) => res.json(data))
     .catch((err) => res.status(400).json('Error: ' + err));
 });
 
