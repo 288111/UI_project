@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import {useNavigate} from 'react-router-dom'
 import {fetchData} from '../../main';
+import { UserContext } from '../../contexts/userContext';
 
 function Signin() {
   const [user, setUser] = useState({
     username: '',
     password: ''
   });
+  const {userdata, updateUser} = useContext(UserContext);
   let navigate = useNavigate();
   const { username, password } = user;
   const onChange = (e) => setUser({ ...user, [e.target.name]: e.target.value });
@@ -14,9 +16,11 @@ function Signin() {
     fetchData('/users/login', { username, password }, 'POST')
       .then((data) => {
         console.log(data);
+        updateUser('username', username);
         navigate(`/profile?user=${username}`);
       })
       .catch((error) => {
+        alert(error.error)
         console.error(error);
       });
   };

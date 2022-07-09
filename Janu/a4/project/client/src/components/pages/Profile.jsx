@@ -1,11 +1,13 @@
 import List from "../List";
 import CreatePost from "../CreatePost";
 import {useEffect, useState} from 'react';
-import {fetchData} from '../../main'
+import {fetchData} from '../../main';
 function Profile() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const username = new URLSearchParams(window.location.search).get('user');
+
+    
     const onCreate = (newPost) => {
         fetchData(`/users/${username}`, {}, 'GET')
           .then((user) => {
@@ -43,13 +45,17 @@ function Profile() {
         setLoading(true);  
         fetchPosts();
     }, [])
+    let props = {
+      list: posts,
+      updateList: setPosts
+    }
   return (
     <>
       <div className="mt-4">Welcome {username} !!</div>
       <h3>Create Posts</h3>
       <CreatePost onCreate={onCreate} />
       <h3>Posts</h3>
-      <List list={posts}></List>
+      <List {...props}></List>
     </>
   );
 }

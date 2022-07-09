@@ -6,7 +6,8 @@ require('dotenv').config();
 
 const app = express();
 app.use(express.json());
-const port = process.env.SERVER_PORT || 8080;
+app.use(express.static(__dirname + '/public'))
+const port = process.env.PORT || 8080;
 
 const dbUrl = process.env.DB_URL;
 mongoose.connect(dbUrl);
@@ -22,7 +23,7 @@ app.use('/users', usersRouter);
 app.use('/posts', postsRouter);
 
 app.get('/', function (req, res, next) {
-  res.sendFile(path.join(__dirname, '/public/index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(port, function () {

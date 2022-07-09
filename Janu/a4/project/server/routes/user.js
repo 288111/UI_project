@@ -104,9 +104,16 @@ router.route('/register').post((req, res) => {
   newUser
     .save()
     .then(() => {
-      res.json({'message' : 'OK', 'error': ''});
+      res.json({ message: 'OK', error: '' });
     })
-    .catch((err) => res.status(400).json({'message' : '', 'error': err}));
+    .catch((err) => {
+      if (err.code === 11000) {
+        return res
+          .status(400)
+          .json({ message: '', error: 'userid is already in use' });
+      }
+      return res.status(400).json({ message: '', error: 'invalid request' });
+    });
 });
 
 router.route('/login').post((req, res) => {
@@ -118,15 +125,15 @@ router.route('/login').post((req, res) => {
         let salt = user.salt;
         password_hash = bcryptjs.hashSync(password, salt);
         if (password_hash == user.password) {
-          return res.json({'message': 'OK', 'error': ''});
+          return res.json({ message: 'OK', error: '' });
         } else {
-          return res.status(401).json({'message' : '', 'error': 'unauthorised'});
+          return res.status(401).json({ message: '', error: 'unauthorised' });
         }
       } else {
-        res.status(404).json({'message' : '', 'error':'Resource Not found'});
+        res.status(404).json({ message: '', error: 'Resource Not found' });
       }
     })
-    .catch((err) => res.status(400).json({'message' : '', 'error': err}));
+    .catch((err) => res.status(400).json({ message: '', error: err }));
 });
 
 module.exports = router;

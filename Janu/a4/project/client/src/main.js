@@ -16,3 +16,15 @@ export async function fetchData(route = '', data = {}, methodType) {
     throw await response.json();
   }
 }
+
+export async function deleteData(route = '') {
+let options = {
+  method: 'DELETE',
+};
+const response = await fetch(`http://localhost:8080${route}`, options);
+if (response.ok) {
+  return await response.json();
+} else {
+  throw await response.json();
+}
+}
